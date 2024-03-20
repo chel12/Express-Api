@@ -33,7 +33,7 @@ const UserController = {
 			//имя на основе пользователя и даты
 			const avatarName = `${name}_${Date.now()}.png`;
 			//путь для картинки и имя картинки
-			const avatarPath = path.join(__dirname, '../uploads', avatarName);
+			const avatarPath = path.join(__dirname, '/../uploads', avatarName);
 
 			//добавить в папку uploads/путь/что
 			fs.writeFileSync(avatarPath, png);
@@ -42,7 +42,7 @@ const UserController = {
 					email,
 					password: hashedPassword,
 					name,
-					avatarUrl: `/uploads/${avatarPath}`,
+					avatarUrl: `/uploads/${avatarName}`,
 				},
 			});
 			res.json(user);
