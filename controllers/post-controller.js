@@ -59,7 +59,35 @@ const PostController = {
 		}
 	},
 	getPostById: async (req, res) => {
+		const { id } = req.params;
+		const userId = req.user.userId;
+
 		try {
+			const post = await prisma.post.findUnique({
+				//найди по id
+				where: { id },
+				//включи туда коменты, лайки, автора
+				include: {
+					comments: {
+						//найди в коментах и включи в выдачу юзера с тру
+						include: {
+							user: true,
+						},
+					},
+					likes: true,
+					author: true,
+				},
+			});
+			//если поста нет
+			if (!post) {
+				return res.status(404).json({ error: 'Пост не найден' });
+			}
+			//узнать у поста, лайкнул ли его текущий пользователь
+			const postWithLikeInfo = {
+				...post,
+				likedByUser: post.likes.some((like) => like.userId === userId),
+			};
+			res.json(postWithLikeInfo);
 		} catch (error) {
 			console.error('Get Post By Id', error);
 			res.status(500).json({ error: 'Internal server error' });
