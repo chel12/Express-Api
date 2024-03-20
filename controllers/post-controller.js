@@ -94,9 +94,42 @@ const PostController = {
 		}
 	},
 	deletePost: async (req, res) => {
+		const { id } = req.params;
+		//проверка что пользователь удаляет именно свой пост
+		const post = await prisma.post.findUnique({ where: { id } });
+		//есть ли пост
+		if (!post) {
+			return res.status(404).json({ error: 'Пост не найден' });
+		}
+		if (post.authorId !== req.user.userId) {
+			return res.status(403).json({ error: 'Нет доступа' });
+		}
 		try {
+			//что у поста есть: коменты,лайки, все удалить надо а потом пост
+			//через транзакции призмы(это удаление из нескольких баз)
+			const transaction = await prisma.$transaction([
+				//удалить коменты все
+				prisma.comment.deleteMany({
+					where: {
+						postId: id,
+					},
+				}),
+				//удалить лайки все
+				prisma.like.deleteMany({
+					where: {
+						postId: id,
+					},
+				}),
+				//удалить пост сам
+				prisma.post.delete({
+					where: {
+						id,
+					},
+				}),
+			]);
+			res.json(transaction);
 		} catch (error) {
-			console.error('delete post', error);
+			console.error('Delete Post error', error);
 			res.status(500).json({ error: 'Internal server error' });
 		}
 	},
