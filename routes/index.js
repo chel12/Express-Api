@@ -6,6 +6,7 @@ const multer = require('multer');
 const UserController = require('../controllers/user-controller');
 const authenticateToken = require('../controllers/middleware/auth');
 const PostController = require('../controllers/post-controller');
+const CommentController = require('../controllers/comment-controller');
 
 const uploadDestination = 'uploads';
 
@@ -38,4 +39,7 @@ router.get('/posts', authenticateToken, PostController.getAllPosts);
 router.get('/posts/:id', authenticateToken, PostController.getPostById);
 router.delete('/posts/:id', authenticateToken, PostController.deletePost);
 
+//Роуты комментов
+router.post('/comments', authenticateToken, CommentController.createComment);
+router.delete('/comments/:id', authenticateToken, CommentController.deleteComment);
 module.exports = router;
