@@ -3,6 +3,7 @@ const router = express.Router();
 
 //пакет для мульти загрузки
 const multer = require('multer');
+const UserController = require('../controllers/user-controller');
 
 const uploadDestination = 'uploads';
 
@@ -23,8 +24,10 @@ const storage = multer.diskStorage({
 const uploads = multer({ storage: storage });
 
 //роуты
-router.get('/register', (req, res) => {
-	res.send('register');
-});
+router.post('/register', UserController.register);
+router.post('/login', UserController.login);
+router.get('/current', UserController.current);
+router.get('/users/:id', UserController.getUserById);
+router.put('/users/:id', UserController.updateUser);
 
 module.exports = router;
