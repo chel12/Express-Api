@@ -29,7 +29,7 @@ const UserController = {
 			//хеш текущего пароля
 			const hashedPassword = await bcypt.hash(password, 10);
 			//добавление рандом аватарки
-			const png = Jdenticon.toPng(name, 200);
+			const png = Jdenticon.toPng(`${name}${Date.now()}`, 200);
 			//имя на основе пользователя и даты
 			const avatarName = `${name}_${Date.now()}.png`;
 			//путь для картинки и имя картинки
